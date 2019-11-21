@@ -6,6 +6,14 @@ server.use(express.json());
 
 //"prettier.singleQuote" : true
 
+// Middleware para mostrar quantidade de requisições
+let qtdReq = 0;
+server.use((req, res, next) => {
+  console.log(`Quantidade de requisições: ${++qtdReq}`)
+
+  next();
+})
+
 // Middleware para verificar se o projeto existe
 function checkProjectInArray(req, res, next) {
   const { id } = req.params;
