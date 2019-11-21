@@ -6,7 +6,18 @@ server.use(express.json());
 
 //"prettier.singleQuote" : true
 
+// Middleware para verificar se o projeto existe
+function checkProjectInArray(req, res, next) {
+  const { id } = req.params;
 
+  const project = projects.find(p => p.id === id);
+
+  if (!project) {
+    return res.status(400).json({ error: 'Project does not exists' });
+  }
+
+  return next();
+}
 
 const projects = [];
 
@@ -31,7 +42,7 @@ server.get('/projects', (req, res) => {
 });
 
 // Altera um projeto por id
-server.put('/projects/:id', (req, res) => {
+server.put('/projects/:id', checkProjectInArray, (req, res) => {
   const { id } = req.params;
   const { title } = req.body;
 
@@ -43,7 +54,7 @@ server.put('/projects/:id', (req, res) => {
 });
 
 // Excluir projeto
-server.delete('/projects/:id', (req, res) => {
+server.delete('/projects/:id', checkProjectInArray, (req, res) => {
   const { id } = req.params;
 
   const projectIndex = projects.findIndex(p => p.id === id);
@@ -54,7 +65,7 @@ server.delete('/projects/:id', (req, res) => {
 })
 
 // Incluir tarefas
-server.post('/projects/:id/tasks', (req, res) => {
+server.post('/projects/:id/tasks', checkProjectInArray, (req, res) => {
   const { id } = req.params;
   const { title } = req.body;
 
